@@ -10,6 +10,11 @@ class LocalDatabase {
     this.readyPromise = this.init();
   }
 
+  async ensureReady() {
+    if (this.db) return this.db;
+    return this.readyPromise;
+  }
+
   async init() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -39,14 +44,18 @@ class LocalDatabase {
         // v2: replace the old per-device random demo history with one
         // deterministic history so the same AquaSystem looks identical on
         // every device without requiring a cloud database.
-        if (event.oldVersion < 2 && db.objectStoreNames.contains('telemetry')) {
-          db.transaction('telemetry', 'readwrite').objectStore('telemetry').clear();
+        if (event.oldVersion > 0 && event.oldVersion < 2 && db.objectStoreNames.contains('telemetry')) {
+          event.target.transaction.objectStore('telemetry').clear();
         }
       };
 
-      request.onsuccess = (event) => {
+      request.onsuccess = async (event) => {
         this.db = event.target.result;
-        this.seedInitialData();
+        try {
+          await this.seedInitialData();
+        } catch (err) {
+          console.warn('[NeerSetu DB] Seeding warning:', err);
+        }
         resolve(this.db);
       };
 
@@ -200,7 +209,7 @@ class LocalDatabase {
   }
 
   async getAllSystems() {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('systems', 'readonly');
       const store = tx.objectStore('systems');
@@ -211,7 +220,7 @@ class LocalDatabase {
   }
 
   async getSystem(systemId) {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('systems', 'readonly');
       const store = tx.objectStore('systems');
@@ -222,7 +231,7 @@ class LocalDatabase {
   }
 
   async saveSystem(systemObj) {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('systems', 'readwrite');
       const store = tx.objectStore('systems');
@@ -233,7 +242,7 @@ class LocalDatabase {
   }
 
   async addTelemetry(record) {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('telemetry', 'readwrite');
       const store = tx.objectStore('telemetry');
@@ -249,7 +258,7 @@ class LocalDatabase {
   }
 
   async getTelemetryForSystem(systemId, limit = 50) {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('telemetry', 'readonly');
       const store = tx.objectStore('telemetry');
@@ -272,7 +281,7 @@ class LocalDatabase {
   }
 
   async getPendingSyncRecords() {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('telemetry', 'readonly');
       const store = tx.objectStore('telemetry');
@@ -285,7 +294,7 @@ class LocalDatabase {
   }
 
   async markRecordsSynced(ids) {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('telemetry', 'readwrite');
       const store = tx.objectStore('telemetry');
@@ -313,7 +322,7 @@ class LocalDatabase {
   }
 
   async getSettings(key, defaultValue = null) {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('settings', 'readonly');
       const store = tx.objectStore('settings');
@@ -324,7 +333,7 @@ class LocalDatabase {
   }
 
   async saveSettings(key, value) {
-    await this.readyPromise;
+    await this.ensureReady();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('settings', 'readwrite');
       const store = tx.objectStore('settings');

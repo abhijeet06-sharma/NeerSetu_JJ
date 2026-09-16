@@ -1,7 +1,6 @@
 // NeerSetu_JJ Service Worker - Offline-First PWA Cache
-// v6: resilient in normal browsers; network-first navigation avoids stale
-// app shells while retaining an offline fallback. No cloud dependency.
-const CACHE_NAME = 'neersetu-jj-cache-v6';
+// v7: fixed IndexedDB initialization and deterministic pre-seeding
+const CACHE_NAME = 'neersetu-jj-cache-v7';
 const PRECACHE_ASSETS = [
   './',
   './index.html',

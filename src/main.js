@@ -36,7 +36,18 @@ class NeerSetuApp {
     this.qrModal = null;
     this.stageModal = null;
 
-    this.init();
+    this.init().catch((err) => {
+      console.error('[NeerSetuApp] Failed to initialize:', err);
+      if (this.appRoot && !this.appRoot.hasChildNodes()) {
+        this.appRoot.innerHTML = `
+          <div style="color: #fff; padding: 2rem; text-align: center; font-family: sans-serif;">
+            <h2>NeerSetu Initialization Notice</h2>
+            <p style="color: #94a3b8;">${err?.message || err}</p>
+            <button onclick="location.reload()" style="padding: 10px 20px; margin-top: 10px; background: #0284c7; color: #fff; border: none; border-radius: 6px; cursor: pointer;">Reload Application</button>
+          </div>
+        `;
+      }
+    });
   }
 
   async init() {
