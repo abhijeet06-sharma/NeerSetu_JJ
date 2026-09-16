@@ -1,6 +1,6 @@
 // NeerSetu_JJ Service Worker - Offline-First PWA Cache
-// v7: fixed IndexedDB initialization and deterministic pre-seeding
-const CACHE_NAME = 'neersetu-jj-cache-v7';
+// v8: English and Hindi localized interface with custom HIN & ENG switcher
+const CACHE_NAME = 'neersetu-jj-cache-v8';
 const PRECACHE_ASSETS = [
   './',
   './index.html',

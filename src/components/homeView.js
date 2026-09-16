@@ -56,10 +56,10 @@ export class HomeView {
               <polyline points="22 4 12 14.01 9 11.01"/>
             </svg>
           `,
-          title: 'Final Water: SAFE',
-          desc: 'Safe water verified. This water is added to the final safe-water tank.' ,
+          title: i18n.t('status_good_title'),
+          desc: i18n.t('status_good_desc'),
           badgeClass: 'badge-live',
-          badgeText: '🟢 SAFE'
+          badgeText: i18n.t('status_good_badge')
         };
       case 'ATTENTION':
         return {
@@ -71,10 +71,10 @@ export class HomeView {
               <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
           `,
-          title: 'Final Water: PARTIALLY SAFE',
-          desc: 'One-time re-filtration required. Keep this water in the system and test again after filtration.' ,
+          title: i18n.t('status_attention_title'),
+          desc: i18n.t('status_attention_desc'),
           badgeClass: 'badge-attention',
-          badgeText: '🟡 PARTIAL SAFE'
+          badgeText: i18n.t('status_attention_badge')
         };
       case 'CRITICAL':
         return {
@@ -86,10 +86,10 @@ export class HomeView {
               <line x1="9" y1="9" x2="15" y2="15"/>
             </svg>
           `,
-          title: 'Final Water: CRITICAL',
-          desc: 'Unsafe final water. Use repeated purification cycles; if it still fails, reserve it for an appropriate non-potable purpose.' ,
+          title: i18n.t('status_critical_title'),
+          desc: i18n.t('status_critical_desc'),
           badgeClass: 'badge-critical',
-          badgeText: '🔴 CRITICAL'
+          badgeText: i18n.t('status_critical_badge')
         };
       default:
         return {
@@ -163,23 +163,23 @@ export class HomeView {
         <div class="system-hero-card">
           <div class="system-meta-row">
             <div class="sys-id-block">
-              <span class="sys-label">AQUASYSTEM</span>
+              <span class="sys-label">${i18n.t('aquasystem')}</span>
               <h2 class="sys-id-title">${conn.systemId}</h2>
               <p class="sys-loc-sub">📍 ${location}</p>
             </div>
             <div class="system-action-buttons">
-            <button class="btn-qr-scan-small" id="btn-home-connect" title="Connect to this AquaSystem">
+            <button class="btn-qr-scan-small" id="btn-home-connect" title="${i18n.t('btn_connect')}">
               <span>↔</span>
-              <span>Connect</span>
+              <span>${i18n.t('btn_connect')}</span>
             </button>
-            <button class="btn-qr-scan-small" id="btn-home-qr" title="Scan or Switch AquaSystem">
+            <button class="btn-qr-scan-small" id="btn-home-qr" title="${i18n.t('btn_scan_qr')}">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"/>
                 <rect x="14" y="3" width="7" height="7"/>
                 <rect x="14" y="14" width="7" height="7"/>
                 <rect x="3" y="14" width="7" height="7"/>
               </svg>
-              <span>Scan QR</span>
+              <span>${i18n.t('btn_scan_qr')}</span>
             </button>
             </div>
           </div>
@@ -195,12 +195,12 @@ export class HomeView {
             </svg>
           </div>
           <div class="safe-water-main">
-            <div class="safe-water-label">SAFE WATER AVAILABLE</div>
+            <div class="safe-water-label">${i18n.t('safe_water_available')}</div>
             <div class="safe-water-value">${Number(safeWaterLiters).toFixed(0)} <span>L</span></div>
-            <div class="safe-water-sub">Final reserve tank · ${tankPercent}% of ${tankCapacity} L capacity</div>
+            <div class="safe-water-sub">${i18n.t('final_reserve_tank')} · ${tankPercent}% ${i18n.t('capacity_of')} ${tankCapacity} L ${i18n.t('capacity')}</div>
           </div>
           <div class="safe-water-state ${safeWaterLiters > 0 && r?.water_status === 'GOOD' ? 'ready' : safeWaterLiters > 0 ? 'caution' : 'empty'}">
-            ${safeWaterLiters > 0 && r?.water_status === 'GOOD' ? 'READY' : safeWaterLiters > 0 ? 'CHECK' : 'EMPTY'}
+            ${safeWaterLiters > 0 && r?.water_status === 'GOOD' ? i18n.t('state_ready') : safeWaterLiters > 0 ? i18n.t('state_check') : i18n.t('state_empty')}
           </div>
         </div>
 
@@ -215,7 +215,7 @@ export class HomeView {
                 <span class="rural-badge ${isLive ? 'badge-live' : 'badge-cached'}">
                   ${isLive ? '🟢 ' + i18n.t('state_live') : '🟠 ' + i18n.t('state_cached')}
                 </span>
-                <span class="status-label-chip">WATER QUALITY</span>
+                <span class="status-label-chip">${i18n.t('water_quality')}</span>
               </div>
               <h3 class="status-hero-title">${statusInfo.title}</h3>
               <p class="status-hero-desc">${statusInfo.desc}</p>
@@ -224,7 +224,7 @@ export class HomeView {
 
           <!-- Spoken Audio Assistant Button -->
           <div class="voice-row">
-            <button class="btn-voice-read" id="btn-read-status" aria-label="Read water status aloud">
+            <button class="btn-voice-read" id="btn-read-status" aria-label="${i18n.t('btn_read_status')}">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
                 <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
@@ -238,12 +238,12 @@ export class HomeView {
         <!-- Final-water treatment decision: explicit three-stage output -->
         <div class="final-water-decision ${r?.water_status === 'GOOD' ? 'good' : r?.water_status === 'ATTENTION' ? 'attention' : r?.water_status === 'CRITICAL' ? 'critical' : ''}">
           ${r?.water_status === 'GOOD'
-            ? '🟢 SAFE — No re-filtration required. Safe water is added to the final safe-water tank.'
+            ? i18n.t('decision_good')
             : r?.water_status === 'ATTENTION'
-              ? '🟡 PARTIAL SAFE — One-time re-filtration required. Test the final water again before release.'
+              ? i18n.t('decision_attention')
               : r?.water_status === 'CRITICAL'
-                ? '🔴 CRITICAL — Repeated purification required. If it still fails, use only for an appropriate non-potable purpose.'
-                : '⚪ Waiting for a final-water reading.'}
+                ? i18n.t('decision_critical')
+                : i18n.t('decision_waiting')}
         </div>
 
         <!-- Offline Safety Warning Banner (If Not Live) -->
@@ -345,10 +345,10 @@ export class HomeView {
     this.container.querySelector('#btn-home-connect')?.addEventListener('click', async (e) => {
       const btn = e.currentTarget;
       btn.disabled = true;
-      btn.innerHTML = '<span>…</span><span>Connecting</span>';
+      btn.innerHTML = `<span>…</span><span>${i18n.t('btn_connecting')}</span>`;
       const success = await connectionManager.connectRealBle();
       btn.disabled = false;
-      btn.innerHTML = success ? '<span>✓</span><span>Connected</span>' : '<span>↔</span><span>Try again</span>';
+      btn.innerHTML = success ? `<span>✓</span><span>${i18n.t('btn_connected')}</span>` : `<span>↔</span><span>${i18n.t('btn_try_again')}</span>`;
       this.render();
     });
 

@@ -69,7 +69,7 @@ export class AppNavigation {
       },
       {
         id: 'offline',
-        label: 'Offline / Sync',
+        label: i18n.t('nav_offline'),
         icon: `
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
@@ -89,7 +89,7 @@ export class AppNavigation {
       },
       {
         id: 'tech',
-        label: 'Judge / Tech',
+        label: i18n.t('nav_tech'),
         icon: `
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"/>

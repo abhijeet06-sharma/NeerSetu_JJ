@@ -34,47 +34,39 @@ class SpeechService {
       const tds = reading.tds || 0;
       const turb = reading.turbidity || 0;
 
-      if (lang === 'hi' || lang === 'nag') {
+      if (lang === 'hi') {
         if (status === 'GOOD') {
-          text = `पानी की गुणवत्ता तय सीमा के भीतर है। टीडीएस ${tds} पीपीएम है, और गंदलापन ${turb} एनटीयू है। पानी सामान्य उपयोग के लिए ठीक है।`;
+          text = `पानी की गुणवत्ता पूरी तरह सुरक्षित है। टीडीएस ${tds} पीपीएम, और गंदलापन ${turb} एनटीयू है। सुरक्षित पानी अंतिम टंकी में उपयोग के लिए उपलब्ध है।`;
         } else if (status === 'ATTENTION') {
-          text = `चेतावनी। पानी की गुणवत्ता पर ध्यान दें। टीडीएस ${tds} पीपीएम है। छानना या उबालना आवश्यक है।`;
+          text = `सावधान। पानी आंशिक सुरक्षित है। टीडीएस ${tds} पीपीएम है। इस पानी को एक बार और छानने की आवश्यकता है।`;
         } else {
-          text = `खतरा। पानी की गुणवत्ता खराब है। टीडीएस ${tds} पीपीएम और गंदलापन अधिक है। सीधे न पिएं।`;
-        }
-      } else if (lang === 'sat' || lang === 'kru' || lang === 'mun') {
-        // Phonetic Hindi/Regional speech for tribal regional languages
-        if (status === 'GOOD') {
-          text = `Dak' bugi gea. TDS ${tds} menak'a. Saaf dak' kana.`;
-        } else if (status === 'ATTENTION') {
-          text = `Dak' re dhyan em me. TDS ${tds} menak'a. Chhanao dorkar.`;
-        } else {
-          text = `Kharab dak' kana. Nu aalo. TDS ${tds} menak'a.`;
+          text = `चेतावनी! पानी की गुणवत्ता खराब और असुरक्षित है। टीडीएस ${tds} पीपीएम और गंदलापन बहुत अधिक है। इसे सीधे न पिएं।`;
         }
       } else {
         // English
         if (status === 'GOOD') {
-          text = `Water quality is within configured limits. TDS is ${tds} ppm, turbidity is ${turb} NTU. Safe for normal rural use.`;
+          text = `Water quality is verified safe. TDS is ${tds} ppm, turbidity is ${turb} NTU. Safe water is available in the final tank.`;
         } else if (status === 'ATTENTION') {
-          text = `Attention needed. Water quality requires checking. TDS is ${tds} ppm. Filtration advised.`;
+          text = `Attention needed. Water is partially safe. TDS is ${tds} ppm. One-time re-filtration is required before release.`;
         } else {
-          text = `Critical alert. Water quality limits exceeded. TDS is ${tds} ppm. Do not consume directly.`;
+          text = `Critical alert. Water quality limits are exceeded. TDS is ${tds} ppm. Unsafe water; do not drink directly.`;
         }
       }
     }
 
     try {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95; // Slightly slower for low-literacy clarity
+      utterance.rate = lang === 'hi' ? 0.90 : 0.95;
       utterance.pitch = 1.0;
+      utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-IN';
 
       // Select matching voice if available
       const voices = window.speechSynthesis.getVoices();
-      if (lang === 'hi' || lang === 'nag') {
-        const hiVoice = voices.find((v) => v.lang.startsWith('hi') || v.name.includes('Hindi'));
+      if (lang === 'hi') {
+        const hiVoice = voices.find((v) => v.lang === 'hi-IN' || v.lang.startsWith('hi') || (v.name && v.name.toLowerCase().includes('hindi')));
         if (hiVoice) utterance.voice = hiVoice;
       } else {
-        const enVoice = voices.find((v) => v.lang.startsWith('en-IN') || v.lang.startsWith('en'));
+        const enVoice = voices.find((v) => v.lang === 'en-IN' || v.lang.startsWith('en') || (v.name && v.name.toLowerCase().includes('english')));
         if (enVoice) utterance.voice = enVoice;
       }
 

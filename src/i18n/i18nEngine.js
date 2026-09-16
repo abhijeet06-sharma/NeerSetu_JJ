@@ -3,7 +3,11 @@ import { TRANSLATIONS } from './translations.js';
 
 class I18nEngine {
   constructor() {
-    this.currentLang = localStorage.getItem('neersetu_lang') || 'hi'; // Default Hindi for Jharkhand rural accessibility
+    const saved = localStorage.getItem('neersetu_lang');
+    this.currentLang = (saved === 'en' || saved === 'hi') ? saved : 'hi';
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.lang = this.currentLang;
+    }
     this.subscribers = new Set();
   }
 
@@ -12,12 +16,14 @@ class I18nEngine {
   }
 
   setLang(lang) {
-    if (!TRANSLATIONS[lang]) {
-      console.warn(`Language ${lang} not supported, defaulting to Hindi`);
+    if (lang !== 'hi' && lang !== 'en') {
       lang = 'hi';
     }
     this.currentLang = lang;
     localStorage.setItem('neersetu_lang', lang);
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.lang = lang;
+    }
     this.notify();
   }
 
@@ -44,12 +50,8 @@ class I18nEngine {
 
   getSupportedLanguages() {
     return [
-      { code: 'hi', label: 'हिन्दी (Hindi)', native: 'हिन्दी' },
-      { code: 'en', label: 'English', native: 'English' },
-      { code: 'sat', label: 'Santhali (ᱥᱟᱱᱛᱟᱲᱤ)', native: 'ᱥᱟᱱᱛᱟᱲᱤ' },
-      { code: 'nag', label: 'Nagpuri (नागपुरी)', native: 'नागपुरी' },
-      { code: 'kru', label: 'Kurukh (कुड़ुख़)', native: 'कुड़ुख़' },
-      { code: 'mun', label: 'Mundari (मुंडारी)', native: 'मुंडारी' }
+      { code: 'hi', label: 'हिन्दी (Hindi)', native: 'हिन्दी', short: 'HIN' },
+      { code: 'en', label: 'English', native: 'English', short: 'ENG' }
     ];
   }
 }
